@@ -16,4 +16,14 @@ def test_create_user():
     print(f"User created successfully: {response_data}")
 
 
+def register_user(code: str, token: str) -> None:
+    data = {
+        "token": token,
+        "code": code,
+        "password": "abcd1234",
+    }
+    response = requests.post(base_url + "/users/register", json=data)
+    assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+
+
 test_create_user()

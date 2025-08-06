@@ -14,9 +14,10 @@ def test_create_user():
     response_data = response.json()
     assert "token" in response_data, "Response should contain a token"
     print(f"User created successfully: {response_data}")
+    return response_data["token"]
 
 
-def register_user(code: str, token: str) -> None:
+def test_register_user(code: str, token: str) -> None:
     data = {
         "token": token,
         "code": code,
@@ -24,6 +25,8 @@ def register_user(code: str, token: str) -> None:
     }
     response = requests.post(base_url + "/users/register", json=data)
     assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+    print("User registered successfully:", response.json())
 
 
-test_create_user()
+token = test_create_user()
+test_register_user(input("code: "), token)

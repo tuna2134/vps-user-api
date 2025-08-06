@@ -24,6 +24,13 @@ impl APIError {
             message: message.to_string(),
         }
     }
+
+    pub fn not_found(message: &str) -> Self {
+        Self {
+            status: StatusCode::NOT_FOUND,
+            message: message.to_string(),
+        }
+    }
 }
 
 impl IntoResponse for APIError {

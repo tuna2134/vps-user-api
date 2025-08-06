@@ -8,6 +8,7 @@ use tokio::net::TcpListener;
 
 use crate::state::AppState;
 
+mod db;
 mod error;
 mod routes;
 mod state;
@@ -21,7 +22,7 @@ async fn main() -> anyhow::Result<()> {
 
     let router = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route("/user", post(routes::user::create_user))
+        .route("/users", post(routes::user::create_user))
         .with_state(state);
 
     let listener = TcpListener::bind("0.0.0.0:3000").await?;

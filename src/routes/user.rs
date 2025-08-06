@@ -1,5 +1,5 @@
 use crate::{error::APIResult, state::AppState};
-use axum::Json;
+use axum::{Json, extract::State};
 use base64::prelude::*;
 use bb8_redis::redis::AsyncCommands;
 use rand::Rng;
@@ -17,7 +17,7 @@ pub struct CreateUserResponseModel {
 }
 
 pub async fn create_user(
-    state: AppState,
+    State(state): State<AppState>,
     Json(payload): Json<CreateUserRequestModel>,
 ) -> APIResult<Json<CreateUserResponseModel>> {
     let code: String = {

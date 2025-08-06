@@ -12,7 +12,7 @@ pub struct ServerPlanResource {
 
 #[derive(Serialize, Deserialize)]
 pub struct ServerPlan {
-    pub id: String,
+    pub id: i32,
     pub name: String,
     pub resources: ServerPlanResource,
 }
@@ -23,6 +23,6 @@ pub struct ServerPlansResponse {
 }
 
 pub async fn get_server_plans() -> APIResult<Json<ServerPlansResponse>> {
-    let data: ServerPlansResponse = serde_json::from_str("data.json")?;
+    let data: ServerPlansResponse = serde_json::from_str(include_str!("../../data.json"))?;
     Ok(Json(data))
 }

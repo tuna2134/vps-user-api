@@ -1,7 +1,7 @@
 use crate::{
     db::{
         token::add_token,
-        user::{add_user, get_userid_by_name_and_password},
+        user::{add_user, get_userdata_by_id, get_userid_by_name_and_password},
     },
     error::{APIError, APIResult},
     state::AppState,
@@ -128,4 +128,32 @@ pub async fn issue_user_token(
     let nonce = token.get_nonce_as_string();
     add_token(&state.db_pool, nonce, user_id).await?;
     Ok(Json(IssueUserTokenResponseModel { token: token.generate()? }))
+}
+
+#[derive(Serialize)]
+pub struct GetUserDataResponseModel {
+    pub username: String,
+    pub email: String,
+    pub avatar_url: String,
+}
+
+pub async fn get_user(
+    State(state): State<AppState>,
+    token: Token,
+) -> APIResult<Json<GetUserDataResponseModel>> {
+    if let Some((username, email)) = get_userdata_by_id(&state.db_pool, token.user_id).await? {
+        let avatar_url = {
+            let mut hasher = Sha256::new();
+            hasher.update(email.as_bytes());
+            let hash = hasher.finalize();
+            format!("https://gravatar.com/avatar/{:x}", hash)
+        };
+        return Ok(Json(GetUserDataResponseModel {
+            username,
+            email,
+            avatar_url,
+        }));
+    } else {
+        return Err(APIError::not_found("User not found"));
+    }
 }

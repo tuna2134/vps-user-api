@@ -11,7 +11,7 @@ use tower_http::cors::{Any, CorsLayer};
 use crate::{
     routes::{
         server::{create_server, get_server_plans},
-        user::register_user,
+        user::{get_user, register_user},
     },
     state::AppState,
 };
@@ -38,6 +38,7 @@ async fn main() -> anyhow::Result<()> {
     let router = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/users", post(routes::user::create_user))
+        .route("/users/@me", get(get_user))
         .route("/users/register", post(register_user))
         .route("/users/login", post(routes::user::issue_user_token))
         .route("/servers/plans", get(get_server_plans))

@@ -10,7 +10,8 @@ use crate::{
     token::Token,
     utils::{
         api::domain::{
-            create_domain, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
+            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
+            create_domain,
         },
         ip_calc::cidr_to_list,
     },
@@ -111,8 +112,14 @@ pub async fn get_all_servers(
     token: Token,
 ) -> APIResult<Json<Vec<GetAllServersResponse>>> {
     let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
-    let response = servers.into_iter().map(|(id, name, plan, ip_address)| {
-        GetAllServersResponse { id, name, plan, ip_address }
-    }).collect();
+    let response = servers
+        .into_iter()
+        .map(|(id, name, plan, ip_address)| GetAllServersResponse {
+            id,
+            name,
+            plan,
+            ip_address,
+        })
+        .collect();
     Ok(Json(response))
 }

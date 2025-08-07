@@ -94,7 +94,9 @@ pub async fn register_user(
         let token = Token::new(user_id)?;
         let nonce = token.get_nonce_as_string();
         add_token(&state.db_pool, nonce, user_id).await?;
-        Ok(Json(RegisterUserResponseModel { token: token.generate()? }))
+        Ok(Json(RegisterUserResponseModel {
+            token: token.generate()?,
+        }))
     } else {
         Err(APIError::not_found("User data not found"))
     }
@@ -127,7 +129,9 @@ pub async fn issue_user_token(
     let token = Token::new(user_id)?;
     let nonce = token.get_nonce_as_string();
     add_token(&state.db_pool, nonce, user_id).await?;
-    Ok(Json(IssueUserTokenResponseModel { token: token.generate()? }))
+    Ok(Json(IssueUserTokenResponseModel {
+        token: token.generate()?,
+    }))
 }
 
 #[derive(Serialize)]

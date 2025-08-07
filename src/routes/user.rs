@@ -150,14 +150,14 @@ pub async fn get_user(
             let mut hasher = Sha256::new();
             hasher.update(email.as_bytes());
             let hash = hasher.finalize();
-            format!("https://gravatar.com/avatar/{:x}", hash)
+            format!("https://gravatar.com/avatar/{hash:x}")
         };
-        return Ok(Json(GetUserDataResponseModel {
+        Ok(Json(GetUserDataResponseModel {
             username,
             email,
             avatar_url,
-        }));
+        }))
     } else {
-        return Err(APIError::not_found("User not found"));
+        Err(APIError::not_found("User not found"))
     }
 }

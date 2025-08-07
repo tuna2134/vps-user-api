@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO\n            server (id, name, ip_address, plan, author_id)\n        VALUES\n            ($1, $2, $3, $4, $5)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5421b7b8a13621089e67ca4c1bf58e12099de287da26bb70594e92c32cc3373e"
+}

@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO\n            session_token(nonce, user_id)\n        VALUES\n            ($1, $2)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "58246519f3b44ea5d5a07f5764b116520b0caada422bff12af34de0c15c38518"
+}

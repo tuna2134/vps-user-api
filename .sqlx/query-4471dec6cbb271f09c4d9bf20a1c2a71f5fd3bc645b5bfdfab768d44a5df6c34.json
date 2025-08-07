@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT ip_address FROM server",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "ip_address",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "4471dec6cbb271f09c4d9bf20a1c2a71f5fd3bc645b5bfdfab768d44a5df6c34"
+}

@@ -44,9 +44,6 @@ pub async fn get_server_plans() -> APIResult<Json<ServerPlansResponse>> {
 #[derive(Deserialize, Serialize)]
 pub struct CreateServerRequest {
     pub name: String,
-    pub ip_address: String,
-    pub server_type: String,
-    pub server_os: String,
     pub server_password: String,
     pub plan: i32,
 }
@@ -84,7 +81,7 @@ pub async fn create_server(
         },
         resources: CreateDomainRequestResources {
             cpu: plan.resources.cpu,
-            memory: plan.resources.memory as f32 / 1024.0,
+            memory: plan.resources.memory / 1024,
             disk: format!("{}G", plan.resources.disk),
         },
     })
@@ -93,7 +90,7 @@ pub async fn create_server(
         &state.db_pool,
         server_id,
         payload.name,
-        payload.ip_address,
+        ip_address.to_string(),
         payload.plan,
         token.user_id,
     )

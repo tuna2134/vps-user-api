@@ -19,7 +19,7 @@ pub struct CreateDomainRequestNetwork {
 #[derive(Serialize)]
 pub struct CreateDomainRequestResources {
     pub cpu: i32,
-    pub memory: f32,
+    pub memory: i32,
     pub disk: String,
 }
 

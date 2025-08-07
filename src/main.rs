@@ -34,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/users/register", post(register_user))
         .route("/users/login", post(routes::user::issue_user_token))
         .route("/servers/plans", get(get_server_plans))
-        .route("/servers/create", get(create_server))
+        .route("/servers", post(create_server))
         .with_state(state);
 
     let listener = TcpListener::bind("0.0.0.0:3000").await?;

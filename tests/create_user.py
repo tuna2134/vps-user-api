@@ -25,8 +25,23 @@ def test_register_user(code: str, token: str) -> None:
     }
     response = requests.post(base_url + "/users/register", json=data)
     assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
-    print("User registered successfully:", response.json())
+    return response.json()["token"]
+
+
+def test_create_server(token: str):
+    url = f"{base_url}/servers"
+    data = {
+        "name": "testserver",
+        "plan": 0,
+        "server_password": "password123",
+    }
+    response = requests.post(url, json=data, headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200, f"Expected status code 200, got {response.status_code}"
+    print(f"Server created successfully: {response.json()}")
 
 
 token = test_create_user()
-test_register_user(input("code: "), token)
+token = test_register_user(input("code: "), token)
+print(f"Registration token: {token}")
+# token = "AAAAAS4-tKnznBTGRxk6mSaD_lskCW2QrVfTZLG055mfL3TVEw"
+test_create_server(token)

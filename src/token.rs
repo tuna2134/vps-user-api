@@ -36,6 +36,10 @@ impl Token {
         nonce.copy_from_slice(&buffer[5..]);
         Ok(Self { user_id, nonce })
     }
+
+    pub fn get_nonce_as_string(&self) -> String {
+        BASE64_URL_SAFE_NO_PAD.encode(self.nonce)
+    }
 }
 
 impl FromRequestParts<AppState> for Token {
@@ -52,7 +56,7 @@ impl FromRequestParts<AppState> for Token {
 
         let token = Token::parse(bearer.token().to_string())?;
 
-        let nonce = BASE64_URL_SAFE_NO_PAD.encode(token.nonce);
+        let nonce = token.get_nonce_as_string();
 
         if !exist_token(&state.db_pool, nonce, token.user_id).await? {
             return Err(APIError::unauthorized("Invalid token"));

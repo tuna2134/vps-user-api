@@ -92,9 +92,9 @@ pub async fn register_user(
         )
         .await?;
         let token = Token::new(user_id)?;
-        let token_str = token.generate()?;
-        add_token(&state.db_pool, token_str.clone(), user_id).await?;
-        Ok(Json(RegisterUserResponseModel { token: token_str }))
+        let nonce = token.get_nonce_as_string();
+        add_token(&state.db_pool, nonce, user_id).await?;
+        Ok(Json(RegisterUserResponseModel { token: token.generate()? }))
     } else {
         Err(APIError::not_found("User data not found"))
     }
@@ -125,7 +125,7 @@ pub async fn issue_user_token(
         .await?
         .ok_or_else(|| APIError::unauthorized("Invalid email or password"))?;
     let token = Token::new(user_id)?;
-    let token_str = token.generate()?;
-    add_token(&state.db_pool, token_str.clone(), user_id).await?;
-    Ok(Json(IssueUserTokenResponseModel { token: token_str }))
+    let nonce = token.get_nonce_as_string();
+    add_token(&state.db_pool, nonce, user_id).await?;
+    Ok(Json(IssueUserTokenResponseModel { token: token.generate()? }))
 }

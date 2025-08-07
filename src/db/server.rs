@@ -61,3 +61,23 @@ pub async fn get_all_servers_from_user(
     .collect();
     Ok(servers)
 }
+
+pub async fn get_server_by_id(pool: &PgPool, server_id: String) -> anyhow::Result<()> {
+    sqlx::query!(
+        r#"
+        SELECT
+            id,
+            name,
+            plan,
+            ip_address
+        FROM
+            server
+        WHERE
+            id = $1
+        "#,
+        server_id
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(())
+}

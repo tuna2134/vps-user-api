@@ -4,7 +4,10 @@ use axum::{
     Router,
     routing::{get, post},
 };
+use axum_extra::headers::Authorization;
+use http::header::AUTHORIZATION;
 use tokio::net::TcpListener;
+use tower_http::cors::{Any, CorsLayer};
 
 use crate::{
     routes::{
@@ -28,6 +31,11 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState::connect(&env::var("DATABASE_URL")?, &env::var("REDIS_URL")?).await?;
 
+    let cors = CorsLayer::new()
+        .allow_methods(Any)
+        .allow_headers([AUTHORIZATION])
+        .allow_origin(Any);
+
     let router = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/users", post(routes::user::create_user))
@@ -35,6 +43,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/users/login", post(routes::user::issue_user_token))
         .route("/servers/plans", get(get_server_plans))
         .route("/servers", post(create_server))
+        .layer(cors)
         .with_state(state);
 
     let listener = TcpListener::bind("0.0.0.0:3000").await?;

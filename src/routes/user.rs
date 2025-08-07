@@ -25,6 +25,7 @@ pub struct CreateUserResponseModel {
     pub token: String,
 }
 
+// 仮ユーザーを作成します。
 pub async fn create_user(
     State(state): State<AppState>,
     Json(payload): Json<CreateUserRequestModel>,
@@ -63,6 +64,7 @@ pub struct RegisterUserResponseModel {
     pub token: String,
 }
 
+// ユーザーの本登録です。
 pub async fn register_user(
     State(state): State<AppState>,
     Json(payload): Json<RegisterUserRequestModel>,
@@ -113,6 +115,7 @@ pub struct IssueUserTokenResponseModel {
     pub token: String,
 }
 
+// ユーザーのトークンを発行します。(ログインで主に利用します。)
 pub async fn issue_user_token(
     State(state): State<AppState>,
     Json(payload): Json<IssueUserTokenRequestModel>,
@@ -141,6 +144,7 @@ pub struct GetUserDataResponseModel {
     pub avatar_url: String,
 }
 
+// ユーザーのデータを取得します。
 pub async fn get_user(
     State(state): State<AppState>,
     token: Token,

@@ -11,7 +11,7 @@ use crate::{
     utils::{
         api::domain::{
             CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
-            create_domain,
+            create_domain, fetch_all_servers,
         },
         ip_calc::cidr_to_list,
     },
@@ -105,21 +105,44 @@ pub struct GetAllServersResponse {
     pub name: String,
     pub plan: i32,
     pub ip_address: String,
+    pub status: String,
 }
 
+// ユーザーが所有するサーバーの一覧を取得します。
 pub async fn get_all_servers(
     State(state): State<AppState>,
     token: Token,
 ) -> APIResult<Json<Vec<GetAllServersResponse>>> {
     let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
+    let server_onlines = {
+        let server_ids: Vec<String> = servers.iter().map(|(id, _, _, _)| id.clone()).collect();
+        fetch_all_servers(server_ids).await?
+    };
+    // 結合する、server_onlines.domainsにサーバのIDが含まれている場合はオンライン、それ以外はオフライン
+    let server_online_set: std::collections::HashSet<String> =
+        server_onlines.domains.into_iter().collect();
+    let servers: Vec<_> = servers
+        .into_iter()
+        .map(|(id, name, plan, ip_address)| {
+            let status = if server_online_set.contains(&id) {
+                "online".to_string()
+            } else {
+                "offline".to_string()
+            };
+            (id, name, plan, ip_address, status)
+        })
+        .collect();
     let response = servers
         .into_iter()
-        .map(|(id, name, plan, ip_address)| GetAllServersResponse {
-            id,
-            name,
-            plan,
-            ip_address,
-        })
+        .map(
+            |(id, name, plan, ip_address, status)| GetAllServersResponse {
+                id,
+                name,
+                plan,
+                ip_address,
+                status,
+            },
+        )
         .collect();
     Ok(Json(response))
 }

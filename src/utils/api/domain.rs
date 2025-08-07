@@ -40,3 +40,21 @@ pub async fn create_domain(payload: CreateDomainRequest) -> anyhow::Result<Strin
     let response_body: CreateDomainResponse = response.json().await?;
     Ok(response_body.id)
 }
+
+#[derive(Deserialize)]
+pub struct AddServerResponse {
+    pub domains: Vec<String>,
+}
+
+pub async fn fetch_all_servers(server_ids: Vec<String>) -> anyhow::Result<AddServerResponse> {
+    let response = reqwest::Client::new()
+        .get(format!("{}/domains", env::var("VM_CONTROLLER_ENDPOINT")?))
+        .query(&[("running", "true"), ("ids", &server_ids.join(","))])
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to get all servers: {}", response.status());
+    }
+    let response_body: AddServerResponse = response.json().await?;
+    Ok(response_body)
+}

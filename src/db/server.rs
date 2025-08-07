@@ -35,3 +35,29 @@ pub async fn get_server_ips(pool: &PgPool) -> anyhow::Result<Vec<String>> {
         .collect();
     Ok(ips)
 }
+
+pub async fn get_all_servers_from_user(
+    pool: &PgPool,
+    user_id: i32,
+) -> anyhow::Result<Vec<(String, String, i32, String)>> {
+    let servers = sqlx::query!(
+        r#"
+        SELECT
+            id,
+            name,
+            plan,
+            ip_address
+        FROM
+            server
+        WHERE
+            author_id = $1
+        "#,
+        user_id
+    )
+    .fetch_all(pool)
+    .await?
+    .into_iter()
+    .map(|row| (row.id, row.name, row.plan, row.ip_address))
+    .collect();
+    Ok(servers)
+}

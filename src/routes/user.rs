@@ -1,7 +1,7 @@
 use crate::{
     db::{
         token::add_token,
-        user::{add_user, get_userdata_by_id, get_userid_by_name_and_password},
+        user::{add_user, get_userdata_by_id, get_userid_by_email_and_password},
     },
     error::{APIError, APIResult},
     state::AppState,
@@ -121,7 +121,7 @@ pub async fn issue_user_token(
         let hash = hasher.finalize();
         BASE64_URL_SAFE_NO_PAD.encode(hash)
     };
-    let user_id = get_userid_by_name_and_password(&state.db_pool, payload.email, password_hash)
+    let user_id = get_userid_by_email_and_password(&state.db_pool, payload.email, password_hash)
         .await?
         .ok_or_else(|| APIError::unauthorized("Invalid email or password"))?;
     let token = Token::new(user_id)?;

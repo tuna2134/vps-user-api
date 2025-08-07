@@ -4,14 +4,13 @@ use axum::{Json, extract::State};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::server::{add_server, get_server_ips},
+    db::server::{add_server, get_all_servers_from_user, get_server_ips},
     error::{APIError, APIResult},
     state::AppState,
     token::Token,
     utils::{
         api::domain::{
-            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
-            create_domain,
+            create_domain, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
         },
         ip_calc::cidr_to_list,
     },
@@ -97,4 +96,23 @@ pub async fn create_server(
     .await
     .map_err(|e| APIError::internal_server_error(&e.to_string()))?;
     Ok(())
+}
+
+#[derive(Serialize)]
+pub struct GetAllServersResponse {
+    pub id: String,
+    pub name: String,
+    pub plan: i32,
+    pub ip_address: String,
+}
+
+pub async fn get_all_servers(
+    State(state): State<AppState>,
+    token: Token,
+) -> APIResult<Json<Vec<GetAllServersResponse>>> {
+    let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
+    let response = servers.into_iter().map(|(id, name, plan, ip_address)| {
+        GetAllServersResponse { id, name, plan, ip_address }
+    }).collect();
+    Ok(Json(response))
 }

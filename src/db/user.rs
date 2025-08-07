@@ -21,9 +21,9 @@ pub async fn add_user(
     Ok(r.id)
 }
 
-pub async fn get_userid_by_name_and_password(
+pub async fn get_userid_by_email_and_password(
     pool: &PgPool,
-    username: String,
+    email: String,
     password_hash: String,
 ) -> anyhow::Result<Option<i32>> {
     let rec = sqlx::query!(
@@ -33,11 +33,11 @@ pub async fn get_userid_by_name_and_password(
         FROM
             users
         WHERE
-            username = $1
+            email = $1
         AND
             password_hash = $2
         "#,
-        username,
+        email,
         password_hash
     )
     .fetch_optional(pool)

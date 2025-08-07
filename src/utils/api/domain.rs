@@ -1,0 +1,42 @@
+use std::env;
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize)]
+pub struct CreateDomainRequest {
+    pub password: String,
+    pub network: CreateDomainRequestNetwork,
+    pub resources: CreateDomainRequestResources,
+}
+
+#[derive(Serialize)]
+pub struct CreateDomainRequestNetwork {
+    pub address: String,
+    pub gateway: String,
+    pub interface: String,
+}
+
+#[derive(Serialize)]
+pub struct CreateDomainRequestResources {
+    pub cpu: i32,
+    pub memory: f32,
+    pub disk: String,
+}
+
+#[derive(Deserialize)]
+pub struct CreateDomainResponse {
+    pub id: String,
+}
+
+pub async fn create_domain(payload: CreateDomainRequest) -> anyhow::Result<String> {
+    let response = reqwest::Client::new()
+        .post(format!("{}/domains", env::var("VM_CONTROLLER_ENDPOINT")?))
+        .json(&payload)
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to create domain: {}", response.status());
+    }
+    let response_body: CreateDomainResponse = response.json().await?;
+    Ok(response_body.id)
+}

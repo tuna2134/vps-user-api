@@ -10,7 +10,9 @@ pub async fn add_token(pool: &PgPool, token: String, user_id: i32) -> anyhow::Re
         "#,
         token,
         user_id,
-    ).execute(pool).await?;
+    )
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
@@ -21,6 +23,8 @@ pub async fn exist_token(pool: &PgPool, token: String, user_id: i32) -> anyhow::
         "#,
         token,
         user_id
-    ).fetch_one(pool).await?;
+    )
+    .fetch_one(pool)
+    .await?;
     Ok(rec.count.unwrap() == 1)
 }

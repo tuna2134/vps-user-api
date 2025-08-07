@@ -31,6 +31,20 @@ impl APIError {
             message: message.to_string(),
         }
     }
+
+    pub fn bad_request(message: &str) -> Self {
+        Self {
+            status: StatusCode::BAD_REQUEST,
+            message: message.to_string(),
+        }
+    }
+
+    pub fn internal_server_error(message: &str) -> Self {
+        Self {
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            message: message.to_string(),
+        }
+    }
 }
 
 impl IntoResponse for APIError {
@@ -50,10 +64,7 @@ where
     fn from(error: E) -> Self {
         let error = error.into();
         tracing::error!("{}", error);
-        Self {
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-            message: error.to_string(),
-        }
+        APIError::internal_server_error(&error.to_string())
     }
 }
 

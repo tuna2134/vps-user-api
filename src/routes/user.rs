@@ -1,14 +1,18 @@
 use crate::{
-    db::{token::add_token, user::{add_user, get_userid_by_name_and_password}},
+    db::{
+        token::add_token,
+        user::{add_user, get_userid_by_name_and_password},
+    },
     error::{APIError, APIResult},
-    state::AppState, token::Token,
+    state::AppState,
+    token::Token,
 };
 use axum::{Json, extract::State};
 use base64::prelude::*;
 use bb8_redis::redis::AsyncCommands;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use sha2::{Sha256, Digest};
+use sha2::{Digest, Sha256};
 
 #[derive(Deserialize, Serialize)]
 pub struct CreateUserRequestModel {
@@ -117,13 +121,9 @@ pub async fn issue_user_token(
         let hash = hasher.finalize();
         BASE64_URL_SAFE_NO_PAD.encode(hash)
     };
-    let user_id = get_userid_by_name_and_password(
-        &state.db_pool,
-        payload.email,
-        password_hash,
-    )
-    .await?
-    .ok_or_else(|| APIError::unauthorized("Invalid email or password"))?;
+    let user_id = get_userid_by_name_and_password(&state.db_pool, payload.email, password_hash)
+        .await?
+        .ok_or_else(|| APIError::unauthorized("Invalid email or password"))?;
     let token = Token::new(user_id)?;
     let token_str = token.generate()?;
     add_token(&state.db_pool, token_str.clone(), user_id).await?;

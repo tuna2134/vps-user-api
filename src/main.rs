@@ -6,13 +6,20 @@ use axum::{
 };
 use tokio::net::TcpListener;
 
-use crate::{routes::{server::get_server_plans, user::register_user}, state::AppState};
+use crate::{
+    routes::{
+        server::{create_server, get_server_plans},
+        user::register_user,
+    },
+    state::AppState,
+};
 
 mod db;
 mod error;
 mod routes;
 mod state;
 mod token;
+mod utils;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -27,6 +34,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/users/register", post(register_user))
         .route("/users/login", post(routes::user::issue_user_token))
         .route("/servers/plans", get(get_server_plans))
+        .route("/servers/create", get(create_server))
         .with_state(state);
 
     let listener = TcpListener::bind("0.0.0.0:3000").await?;

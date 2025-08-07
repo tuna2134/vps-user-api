@@ -42,6 +42,6 @@ pub async fn get_userid_by_name_and_password(
     )
     .fetch_optional(pool)
     .await?;
-    
+
     Ok(rec.map(|r| r.id))
 }

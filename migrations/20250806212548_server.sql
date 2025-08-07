@@ -1,9 +1,9 @@
 -- Add migration script here
 CREATE TABLE server (
-    id SERIAL PRIMARY KEY,
+    id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     ip_address TEXT NOT NULL UNIQUE,
-    type TEXT NOT NULL,
+    plan INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

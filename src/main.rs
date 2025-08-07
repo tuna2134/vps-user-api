@@ -4,8 +4,7 @@ use axum::{
     Router,
     routing::{get, post},
 };
-use axum_extra::headers::Authorization;
-use http::header::AUTHORIZATION;
+use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -33,7 +32,7 @@ async fn main() -> anyhow::Result<()> {
 
     let cors = CorsLayer::new()
         .allow_methods(Any)
-        .allow_headers([AUTHORIZATION])
+        .allow_headers([AUTHORIZATION, CONTENT_TYPE])
         .allow_origin(Any);
 
     let router = Router::new()

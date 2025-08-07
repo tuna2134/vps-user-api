@@ -15,8 +15,8 @@ pub async fn add_server(
         VALUES
             ($1, $2, $3, $4, $5)
         "#,
-        name,
         id,
+        name,
         ip_address,
         plan,
         author_id

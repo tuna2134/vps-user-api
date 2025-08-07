@@ -40,11 +40,11 @@ pub async fn create_user(
     let token: String = {
         let mut buf = [0u8; 32];
         getrandom::fill(&mut buf)?;
-        BASE64_URL_SAFE_NO_PAD.encode(&buf)
+        BASE64_URL_SAFE_NO_PAD.encode(buf)
     };
     {
         let mut conn = state.redis_pool.get().await?;
-        let key = format!("create_user:{}", token);
+        let key = format!("create_user:{token}");
         let value = serde_json::to_string(&payload)?;
         let _: () = conn.set_ex(key, value, 3600).await?;
     }
@@ -96,7 +96,7 @@ pub async fn register_user(
         add_token(&state.db_pool, token_str.clone(), user_id).await?;
         Ok(Json(RegisterUserResponseModel { token: token_str }))
     } else {
-        Err(APIError::not_found("User data not found").into())
+        Err(APIError::not_found("User data not found"))
     }
 }
 

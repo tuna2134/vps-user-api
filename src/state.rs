@@ -12,6 +12,7 @@ pub struct AppState {
 impl AppState {
     pub async fn connect(db_url: &str, redis_url: &str) -> anyhow::Result<Self> {
         let db_pool = PgPool::connect(db_url).await?;
+        sqlx::migrate!().run(&db_pool).await?;
         let redis_manager = RedisConnectionManager::new(redis_url)?;
         let redis_pool = bb8::Pool::builder().build(redis_manager).await?;
 

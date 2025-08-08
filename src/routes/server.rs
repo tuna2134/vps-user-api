@@ -161,7 +161,11 @@ pub async fn get_server_by_id(
             name,
             plan,
             ip_address,
-            status: if server_model.status == "running" { "online".to_string() } else { "offline".to_string() },
+            status: if server_model.status == "running" {
+                "online".to_string()
+            } else {
+                "offline".to_string()
+            },
         }))
     } else {
         Err(APIError::not_found("Server not found"))

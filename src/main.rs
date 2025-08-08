@@ -10,8 +10,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 use crate::{
     routes::{
-        server::{create_server, get_all_servers, get_server_plans},
-        user::{get_user, register_user},
+        server::{create_server, get_all_servers, get_server_plans}, setup_script::create_setup_script, user::{get_user, register_user}
     },
     state::AppState,
 };
@@ -45,6 +44,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/servers", post(create_server))
         .route("/servers/{id}", get(routes::server::get_server_by_id))
         .route("/users/@me/servers", get(get_all_servers))
+        .route("/setup-scripts", post(create_setup_script))
         .layer(cors)
         .with_state(state);
 

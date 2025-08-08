@@ -1,0 +1,41 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            id,\n            name,\n            plan,\n            ip_address\n        FROM\n            server\n        WHERE\n            id = $1\n        AND\n            author_id = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "plan",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "ip_address",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "f081e95630ca146de5388a205b3520e31f08d0ed38932259c0bcf293dcf51517"
+}

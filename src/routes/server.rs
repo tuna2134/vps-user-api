@@ -1,17 +1,16 @@
 use std::env;
 
-use axum::{Json, extract::State};
+use axum::{extract::{Path, State}, Json};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::server::{add_server, get_all_servers_from_user, get_server_ips},
+    db::server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips},
     error::{APIError, APIResult},
     state::AppState,
     token::Token,
     utils::{
         api::domain::{
-            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
-            create_domain, fetch_all_servers,
+            create_domain, fetch_all_servers, fetch_server, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
         },
         ip_calc::cidr_to_list,
     },
@@ -100,7 +99,7 @@ pub async fn create_server(
 }
 
 #[derive(Serialize)]
-pub struct GetAllServersResponse {
+pub struct GetServerResponse {
     pub id: String,
     pub name: String,
     pub plan: i32,
@@ -112,7 +111,7 @@ pub struct GetAllServersResponse {
 pub async fn get_all_servers(
     State(state): State<AppState>,
     token: Token,
-) -> APIResult<Json<Vec<GetAllServersResponse>>> {
+) -> APIResult<Json<Vec<GetServerResponse>>> {
     let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
     let server_onlines = {
         let server_ids: Vec<String> = servers.iter().map(|(id, _, _, _)| id.clone()).collect();
@@ -135,7 +134,7 @@ pub async fn get_all_servers(
     let response = servers
         .into_iter()
         .map(
-            |(id, name, plan, ip_address, status)| GetAllServersResponse {
+            |(id, name, plan, ip_address, status)| GetServerResponse {
                 id,
                 name,
                 plan,
@@ -145,4 +144,24 @@ pub async fn get_all_servers(
         )
         .collect();
     Ok(Json(response))
+}
+
+pub async fn get_server_by_id(
+    State(state): State<AppState>,
+    token: Token,
+    Path(server_id): Path<String>,
+) -> APIResult<Json<GetServerResponse>> {
+    let server = db_get_server_by_id(&state.db_pool, server_id, token.user_id).await?;
+    if let Some((id, name, plan, ip_address)) = server {
+        let server_model = fetch_server(id.clone()).await?;
+        Ok(Json(GetServerResponse {
+            id,
+            name,
+            plan,
+            ip_address,
+            status: server_model.status,
+        }))
+    } else {
+        Err(APIError::not_found("Server not found"))
+    }
 }

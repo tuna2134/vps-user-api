@@ -58,3 +58,20 @@ pub async fn fetch_all_servers(server_ids: Vec<String>) -> anyhow::Result<AddSer
     let response_body: AddServerResponse = response.json().await?;
     Ok(response_body)
 }
+
+#[derive(Deserialize)]
+pub struct ServerModel {
+    pub status: String,
+}
+
+pub async fn fetch_server(server_id: String) -> anyhow::Result<ServerModel> {
+    let response = reqwest::Client::new()
+        .get(format!("{}/domains/{}", env::var("VM_CONTROLLER_ENDPOINT")?, server_id))
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to fetch server: {}", response.status());
+    }
+    let response_body: ServerModel = response.json().await?;
+    Ok(response_body)
+}

@@ -62,8 +62,8 @@ pub async fn get_all_servers_from_user(
     Ok(servers)
 }
 
-pub async fn get_server_by_id(pool: &PgPool, server_id: String) -> anyhow::Result<()> {
-    sqlx::query!(
+pub async fn db_get_server_by_id(pool: &PgPool, server_id: String, user_id: i32) -> anyhow::Result<Option<(String, String, i32, String)>> {
+    let row = sqlx::query!(
         r#"
         SELECT
             id,
@@ -74,10 +74,13 @@ pub async fn get_server_by_id(pool: &PgPool, server_id: String) -> anyhow::Resul
             server
         WHERE
             id = $1
+        AND
+            author_id = $2
         "#,
-        server_id
+        server_id,
+        user_id
     )
     .fetch_optional(pool)
     .await?;
-    Ok(())
+    Ok(row.map(|r| (r.id, r.name, r.plan, r.ip_address)))
 }

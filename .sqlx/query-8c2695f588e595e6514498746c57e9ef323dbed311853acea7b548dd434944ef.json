@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        DELETE FROM\n            server\n        WHERE\n            id = $1\n        AND\n            author_id = $2\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "8c2695f588e595e6514498746c57e9ef323dbed311853acea7b548dd434944ef"
+}

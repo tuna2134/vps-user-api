@@ -88,3 +88,25 @@ pub async fn db_get_server_by_id(
     .await?;
     Ok(row.map(|r| (r.id, r.name, r.plan, r.ip_address)))
 }
+
+pub async fn db_delete_server_by_id(
+    pool: &PgPool,
+    server_id: String,
+    user_id: i32,
+) -> anyhow::Result<()> {
+    sqlx::query!(
+        r#"
+        DELETE FROM
+            server
+        WHERE
+            id = $1
+        AND
+            author_id = $2
+        "#,
+        server_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}

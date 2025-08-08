@@ -80,3 +80,18 @@ pub async fn fetch_server(server_id: String) -> anyhow::Result<ServerModel> {
     let response_body: ServerModel = response.json().await?;
     Ok(response_body)
 }
+
+pub async fn delete_server(server_id: String) -> anyhow::Result<()> {
+    let response = reqwest::Client::new()
+        .delete(format!(
+            "{}/domains/{}",
+            env::var("VM_CONTROLLER_ENDPOINT")?,
+            server_id
+        ))
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to delete server: {}", response.status());
+    }
+    Ok(())
+}

@@ -8,7 +8,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     db::{
-        server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips},
+        server::{
+            add_server, db_delete_server_by_id, db_get_server_by_id, get_all_servers_from_user,
+            get_server_ips,
+        },
         setup_script::get_script_by_id,
     },
     error::{APIError, APIResult},
@@ -16,7 +19,7 @@ use crate::{
     token::Token,
     utils::{
         api::domain::{
-            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
+            self, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
             create_domain, fetch_all_servers, fetch_server,
         },
         ip_calc::cidr_to_list,
@@ -180,4 +183,14 @@ pub async fn get_server_by_id(
     } else {
         Err(APIError::not_found("Server not found"))
     }
+}
+
+pub async fn delete_server(
+    State(state): State<AppState>,
+    token: Token,
+    Path((server_id,)): Path<(String,)>,
+) -> APIResult<()> {
+    domain::delete_server(server_id.clone()).await?;
+    db_delete_server_by_id(&state.db_pool, server_id, token.user_id).await?;
+    Ok(())
 }

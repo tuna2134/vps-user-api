@@ -7,13 +7,17 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::{server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips}, setup_script::get_script_by_id},
+    db::{
+        server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips},
+        setup_script::get_script_by_id,
+    },
     error::{APIError, APIResult},
     state::AppState,
     token::Token,
     utils::{
         api::domain::{
-            create_domain, fetch_all_servers, fetch_server, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
+            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
+            create_domain, fetch_all_servers, fetch_server,
         },
         ip_calc::cidr_to_list,
     },

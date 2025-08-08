@@ -1,5 +1,5 @@
 use axum::{Json, extract::State};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::{
     db::setup_script::db_create_setup_script, error::APIResult, state::AppState, token::Token,

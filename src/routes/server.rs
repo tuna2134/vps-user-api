@@ -1,6 +1,9 @@
 use std::env;
 
-use axum::{extract::{Path, State}, Json};
+use axum::{
+    Json,
+    extract::{Path, State},
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -10,7 +13,8 @@ use crate::{
     token::Token,
     utils::{
         api::domain::{
-            create_domain, fetch_all_servers, fetch_server, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
+            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
+            create_domain, fetch_all_servers, fetch_server,
         },
         ip_calc::cidr_to_list,
     },
@@ -133,15 +137,13 @@ pub async fn get_all_servers(
         .collect();
     let response = servers
         .into_iter()
-        .map(
-            |(id, name, plan, ip_address, status)| GetServerResponse {
-                id,
-                name,
-                plan,
-                ip_address,
-                status,
-            },
-        )
+        .map(|(id, name, plan, ip_address, status)| GetServerResponse {
+            id,
+            name,
+            plan,
+            ip_address,
+            status,
+        })
         .collect();
     Ok(Json(response))
 }
@@ -149,7 +151,7 @@ pub async fn get_all_servers(
 pub async fn get_server_by_id(
     State(state): State<AppState>,
     token: Token,
-    Path(server_id): Path<String>,
+    Path((server_id,)): Path<(String,)>,
 ) -> APIResult<Json<GetServerResponse>> {
     let server = db_get_server_by_id(&state.db_pool, server_id, token.user_id).await?;
     if let Some((id, name, plan, ip_address)) = server {

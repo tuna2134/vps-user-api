@@ -66,7 +66,11 @@ pub struct ServerModel {
 
 pub async fn fetch_server(server_id: String) -> anyhow::Result<ServerModel> {
     let response = reqwest::Client::new()
-        .get(format!("{}/domains/{}", env::var("VM_CONTROLLER_ENDPOINT")?, server_id))
+        .get(format!(
+            "{}/domains/{}",
+            env::var("VM_CONTROLLER_ENDPOINT")?,
+            server_id
+        ))
         .send()
         .await?;
     if !response.status().is_success() {

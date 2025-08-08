@@ -62,7 +62,11 @@ pub async fn get_all_servers_from_user(
     Ok(servers)
 }
 
-pub async fn db_get_server_by_id(pool: &PgPool, server_id: String, user_id: i32) -> anyhow::Result<Option<(String, String, i32, String)>> {
+pub async fn db_get_server_by_id(
+    pool: &PgPool,
+    server_id: String,
+    user_id: i32,
+) -> anyhow::Result<Option<(String, String, i32, String)>> {
     let row = sqlx::query!(
         r#"
         SELECT

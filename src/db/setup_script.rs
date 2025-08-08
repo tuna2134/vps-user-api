@@ -21,3 +21,19 @@ pub async fn db_create_setup_script(
     .await?;
     Ok(())
 }
+
+pub async fn db_get_all_setup_scripts(
+    pool: &PgPool,
+) -> anyhow::Result<Vec<(i32, String, Option<String>, String)>> {
+    let scripts = sqlx::query!(
+        r#"
+        SELECT id, title, description, script FROM setup_script
+        "#,
+    )
+    .fetch_all(pool)
+    .await?
+    .into_iter()
+    .map(|row| (row.id, row.title, row.description, row.script))
+    .collect();
+    Ok(scripts)
+}

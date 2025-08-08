@@ -95,3 +95,18 @@ pub async fn delete_server(server_id: String) -> anyhow::Result<()> {
     }
     Ok(())
 }
+
+pub async fn shutdown_server(server_id: String) -> anyhow::Result<()> {
+    let response = reqwest::Client::new()
+        .post(format!(
+            "{}/domains/{}/shutdown",
+            env::var("VM_CONTROLLER_ENDPOINT")?,
+            server_id
+        ))
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to shutdown server: {}", response.status());
+    }
+    Ok(())
+}

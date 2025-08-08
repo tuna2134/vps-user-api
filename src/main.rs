@@ -1,7 +1,8 @@
 use std::env;
 
 use axum::{
-    routing::{delete, get, post}, Router
+    Router,
+    routing::{delete, get, post},
 };
 use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use tokio::net::TcpListener;
@@ -45,6 +46,10 @@ async fn main() -> anyhow::Result<()> {
         .route("/servers", post(create_server))
         .route("/servers/{id}", get(routes::server::get_server_by_id))
         .route("/servers/{id}", delete(routes::server::delete_server))
+        .route(
+            "/servers/{id}/shutdown",
+            post(routes::server::shutdown_server),
+        )
         .route("/users/@me/servers", get(get_all_servers))
         .route("/setup-scripts", post(create_setup_script))
         .route("/setup-scripts", get(get_all_setup_scripts))

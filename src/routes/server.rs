@@ -194,3 +194,19 @@ pub async fn delete_server(
     db_delete_server_by_id(&state.db_pool, server_id, token.user_id).await?;
     Ok(())
 }
+
+pub async fn shutdown_server(
+    State(state): State<AppState>,
+    token: Token,
+    Path((server_id,)): Path<(String,)>,
+) -> APIResult<()> {
+    if db_get_server_by_id(&state.db_pool, server_id.clone(), token.user_id)
+        .await?
+        .is_none()
+    {
+        return Err(APIError::not_found("Server not found"));
+    }
+
+    domain::shutdown_server(server_id).await?;
+    Ok(())
+}

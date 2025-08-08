@@ -37,3 +37,16 @@ pub async fn db_get_all_setup_scripts(
     .collect();
     Ok(scripts)
 }
+
+pub async fn get_script_by_id(pool: &PgPool, script_id: i32) -> anyhow::Result<Option<String>> {
+    let script = sqlx::query!(
+        r#"
+        SELECT script FROM setup_script WHERE id = $1
+        "#,
+        script_id
+    )
+    .fetch_optional(pool)
+    .await?;
+
+    Ok(script.map(|row| row.script))
+}

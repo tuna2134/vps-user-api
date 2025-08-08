@@ -7,6 +7,7 @@ pub struct CreateDomainRequest {
     pub password: String,
     pub network: CreateDomainRequestNetwork,
     pub resources: CreateDomainRequestResources,
+    pub script: Option<String>,
 }
 
 #[derive(Serialize)]

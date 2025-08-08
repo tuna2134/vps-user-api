@@ -7,14 +7,13 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips},
+    db::{server::{add_server, db_get_server_by_id, get_all_servers_from_user, get_server_ips}, setup_script::get_script_by_id},
     error::{APIError, APIResult},
     state::AppState,
     token::Token,
     utils::{
         api::domain::{
-            CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources,
-            create_domain, fetch_all_servers, fetch_server,
+            create_domain, fetch_all_servers, fetch_server, CreateDomainRequest, CreateDomainRequestNetwork, CreateDomainRequestResources
         },
         ip_calc::cidr_to_list,
     },
@@ -49,6 +48,7 @@ pub struct CreateServerRequest {
     pub name: String,
     pub server_password: String,
     pub plan: i32,
+    pub script_id: Option<i32>,
 }
 
 pub async fn create_server(
@@ -75,6 +75,11 @@ pub async fn create_server(
             .find(|p| p.id == payload.plan)
             .unwrap()
     };
+    let script: Option<String> = if let Some(script_id) = payload.script_id {
+        get_script_by_id(&state.db_pool, script_id).await?
+    } else {
+        None
+    };
     let server_id = create_domain(CreateDomainRequest {
         password: payload.server_password.clone(),
         network: CreateDomainRequestNetwork {
@@ -87,6 +92,7 @@ pub async fn create_server(
             memory: plan.resources.memory / 1024,
             disk: format!("{}G", plan.resources.disk),
         },
+        script,
     })
     .await?;
     add_server(

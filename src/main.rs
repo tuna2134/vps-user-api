@@ -43,7 +43,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/users/login", post(routes::user::issue_user_token))
         .route("/servers/plans", get(get_server_plans))
         .route("/servers", post(create_server))
-        .route("/servers/:id", get(routes::server::get_server_by_id))
+        .route("/servers/{id}", get(routes::server::get_server_by_id))
         .route("/users/@me/servers", get(get_all_servers))
         .layer(cors)
         .with_state(state);

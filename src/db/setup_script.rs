@@ -36,7 +36,15 @@ pub async fn db_get_all_setup_scripts(
     .fetch_all(pool)
     .await?
     .into_iter()
-    .map(|row| (row.id, row.title, row.description, row.script, row.author_id))
+    .map(|row| {
+        (
+            row.id,
+            row.title,
+            row.description,
+            row.script,
+            row.author_id,
+        )
+    })
     .collect();
     Ok(scripts)
 }
@@ -54,7 +62,10 @@ pub async fn get_script_by_id(pool: &PgPool, script_id: i32) -> anyhow::Result<O
     Ok(script.map(|row| row.script))
 }
 
-pub async fn get_scriptdata_by_id(pool: &PgPool, script_id: i32) -> anyhow::Result<Option<(String, Option<String>, String, i32)>> {
+pub async fn get_scriptdata_by_id(
+    pool: &PgPool,
+    script_id: i32,
+) -> anyhow::Result<Option<(String, Option<String>, String, i32)>> {
     let script = sqlx::query!(
         r#"
         SELECT title, description, script, author_id FROM setup_script WHERE id = $1

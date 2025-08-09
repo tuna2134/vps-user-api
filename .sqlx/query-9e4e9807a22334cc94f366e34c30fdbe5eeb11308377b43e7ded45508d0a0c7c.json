@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE\n            setup_script\n        SET\n            title = $1,\n            description = $2,\n            script = $3\n        WHERE\n            id = $4\n        AND\n            author_id = $5\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "9e4e9807a22334cc94f366e34c30fdbe5eeb11308377b43e7ded45508d0a0c7c"
+}

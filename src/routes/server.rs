@@ -214,3 +214,19 @@ pub async fn shutdown_server(
     domain::shutdown_server(server_id).await?;
     Ok(())
 }
+
+pub async fn power_on_server(
+    State(state): State<AppState>,
+    token: Token,
+    Path((server_id,)): Path<(String,)>,
+) -> APIResult<()> {
+    if db_get_server_by_id(&state.db_pool, server_id.clone(), token.user_id)
+        .await?
+        .is_none()
+    {
+        return Err(APIError::not_found("Server not found"));
+    }
+
+    domain::power_on_server(server_id).await?;
+    Ok(())
+}

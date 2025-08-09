@@ -112,3 +112,18 @@ pub async fn shutdown_server(server_id: String) -> anyhow::Result<()> {
     }
     Ok(())
 }
+
+pub async fn power_on_server(server_id: String) -> anyhow::Result<()> {
+    let response = reqwest::Client::new()
+        .post(format!(
+            "{}/domains/{}/power_on",
+            env::var("VM_CONTROLLER_ENDPOINT")?,
+            server_id
+        ))
+        .send()
+        .await?;
+    if !response.status().is_success() {
+        return anyhow::bail!("Failed to power on server: {}", response.status());
+    }
+    Ok(())
+}

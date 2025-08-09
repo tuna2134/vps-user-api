@@ -54,6 +54,10 @@ async fn main() -> anyhow::Result<()> {
             "/servers/{id}/power_on",
             post(routes::server::power_on_server),
         )
+        .route(
+            "/servers/{id}/restart",
+            post(routes::server::restart_server),
+        )
         .route("/users/@me/servers", get(get_all_servers))
         .route("/setup-scripts", post(create_setup_script))
         .route("/setup-scripts", get(get_all_setup_scripts))

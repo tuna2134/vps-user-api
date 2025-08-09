@@ -77,3 +77,35 @@ pub async fn get_scriptdata_by_id(
 
     Ok(script.map(|row| (row.title, row.description, row.script, row.author_id)))
 }
+
+pub async fn set_setup_script(
+    pool: &PgPool,
+    script_id: i32,
+    user_id: i32,
+    title: String,
+    description: Option<String>,
+    script: String,
+) -> anyhow::Result<()> {
+    sqlx::query!(
+        r#"
+        UPDATE
+            setup_script
+        SET
+            title = $1,
+            description = $2,
+            script = $3
+        WHERE
+            id = $4
+        AND
+            author_id = $5
+        "#,
+        title,
+        description,
+        script,
+        script_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}

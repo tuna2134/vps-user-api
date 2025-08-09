@@ -1,8 +1,7 @@
 use std::env;
 
 use axum::{
-    Router,
-    routing::{delete, get, post},
+    routing::{delete, get, post, put}, Router
 };
 use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use tokio::net::TcpListener;
@@ -64,6 +63,10 @@ async fn main() -> anyhow::Result<()> {
         .route(
             "/setup-scripts/{id}",
             get(routes::setup_script::get_script_by_id),
+        )
+        .route(
+            "/setup-scripts/{id}",
+            put(routes::setup_script::put_script_script),
         )
         .layer(cors)
         .with_state(state);

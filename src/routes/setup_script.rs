@@ -5,7 +5,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::setup_script::{db_create_setup_script, db_get_all_setup_scripts, get_scriptdata_by_id},
+    db::setup_script::{db_create_setup_script, db_get_all_setup_scripts, get_scriptdata_by_id, set_setup_script},
     error::APIResult,
     state::AppState,
     token::Token,
@@ -82,4 +82,22 @@ pub async fn get_script_by_id(
     } else {
         Err(anyhow::anyhow!("Script not found").into())
     }
+}
+
+pub async fn put_script_script(
+    State(state): State<AppState>,
+    token: Token,
+    Path((script_id,)): Path<(i32,)>,
+    Json(payload): Json<CreateSetupScriptRequest>,
+) -> APIResult<()> {
+    set_setup_script(
+        &state.db_pool,
+        script_id,
+        token.user_id,
+        payload.title,
+        payload.description,
+        payload.script,
+    )
+    .await?;
+    Ok(())
 }

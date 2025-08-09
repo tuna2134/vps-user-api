@@ -142,6 +142,7 @@ pub struct GetUserDataResponseModel {
     pub username: String,
     pub email: String,
     pub avatar_url: String,
+    pub id: i32,
 }
 
 // ユーザーのデータを取得します。
@@ -160,6 +161,7 @@ pub async fn get_user(
             username,
             email,
             avatar_url,
+            id: token.user_id,
         }))
     } else {
         Err(APIError::not_found("User not found"))

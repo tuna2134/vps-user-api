@@ -61,6 +61,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/users/@me/servers", get(get_all_servers))
         .route("/setup-scripts", post(create_setup_script))
         .route("/setup-scripts", get(get_all_setup_scripts))
+        .route("/setup-scripts/{id}", get(routes::setup_script::get_script_by_id))
         .layer(cors)
         .with_state(state);
 

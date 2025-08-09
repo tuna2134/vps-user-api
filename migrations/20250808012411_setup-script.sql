@@ -5,5 +5,5 @@ CREATE TABLE setup_script (
     description TEXT,
     script TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    author_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE
+    author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 )

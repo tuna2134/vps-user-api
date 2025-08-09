@@ -44,7 +44,7 @@ pub async fn create_domain(payload: CreateDomainRequest) -> anyhow::Result<Strin
 
 #[derive(Deserialize)]
 pub struct AddServerResponse {
-    pub domains: Vec<String>,
+    pub domains: Option<Vec<String>>,
 }
 
 pub async fn fetch_all_servers(server_ids: Vec<String>) -> anyhow::Result<AddServerResponse> {
@@ -56,7 +56,9 @@ pub async fn fetch_all_servers(server_ids: Vec<String>) -> anyhow::Result<AddSer
     if !response.status().is_success() {
         return anyhow::bail!("Failed to get all servers: {}", response.status());
     }
-    let response_body: AddServerResponse = response.json().await?;
+    let text = response.text().await?;
+    tracing::debug!("Fetched server online status: {}", text);
+    let response_body: AddServerResponse = serde_json::from_str(&text)?;
     Ok(response_body)
 }
 

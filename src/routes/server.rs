@@ -132,11 +132,11 @@ pub async fn get_all_servers(
     let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
     let server_onlines = {
         let server_ids: Vec<String> = servers.iter().map(|(id, _, _, _)| id.clone()).collect();
-        fetch_all_servers(server_ids).await?
+        fetch_all_servers(server_ids).await?.domains.unwrap_or_default()
     };
     // 結合する、server_onlines.domainsにサーバのIDが含まれている場合はオンライン、それ以外はオフライン
     let server_online_set: std::collections::HashSet<String> =
-        server_onlines.domains.into_iter().collect();
+        server_onlines.into_iter().collect();
     let servers: Vec<_> = servers
         .into_iter()
         .map(|(id, name, plan, ip_address)| {

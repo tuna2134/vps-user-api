@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id, title, description, script FROM setup_script\n        ",
+  "query": "\n        SELECT\n            id, title, description, script, author_id\n        FROM\n            setup_script\n        ",
   "describe": {
     "columns": [
       {
@@ -22,6 +22,11 @@
         "ordinal": 3,
         "name": "script",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "author_id",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
@@ -31,8 +36,9 @@
       false,
       false,
       true,
+      false,
       false
     ]
   },
-  "hash": "b1b7106ffde77d1dac9e3737fb051bfd13c4b05bb6bf98a04d26835067037169"
+  "hash": "c5a03dabb6cbb4771a068cf79eb0c7e94e3260b9fc89ae09236b7351c647913d"
 }

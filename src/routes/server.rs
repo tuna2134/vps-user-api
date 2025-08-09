@@ -50,7 +50,7 @@ pub async fn get_server_plans() -> APIResult<Json<ServerPlansResponse>> {
     Ok(Json(data))
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct CreateServerRequest {
     pub name: String,
     pub server_password: String,
@@ -63,6 +63,7 @@ pub async fn create_server(
     token: Token,
     Json(payload): Json<CreateServerRequest>,
 ) -> APIResult<()> {
+    tracing::debug!("Creating server with payload: {:?}", payload);
     let mut used_ips = get_server_ips(&state.db_pool).await?;
     let (ips, prefix) = cidr_to_list(&env::var("NETWORK_CIDR")?)?;
     used_ips.push(format!("{}/{}", env::var("NETWORK_GATEWAY")?, prefix));
@@ -87,6 +88,7 @@ pub async fn create_server(
     } else {
         None
     };
+    tracing::debug!("{:?}", script);
     let server_id = create_domain(CreateDomainRequest {
         password: payload.server_password.clone(),
         network: CreateDomainRequestNetwork {
@@ -132,11 +134,13 @@ pub async fn get_all_servers(
     let servers = get_all_servers_from_user(&state.db_pool, token.user_id).await?;
     let server_onlines = {
         let server_ids: Vec<String> = servers.iter().map(|(id, _, _, _)| id.clone()).collect();
-        fetch_all_servers(server_ids).await?.domains.unwrap_or_default()
+        fetch_all_servers(server_ids)
+            .await?
+            .domains
+            .unwrap_or_default()
     };
     // 結合する、server_onlines.domainsにサーバのIDが含まれている場合はオンライン、それ以外はオフライン
-    let server_online_set: std::collections::HashSet<String> =
-        server_onlines.into_iter().collect();
+    let server_online_set: std::collections::HashSet<String> = server_onlines.into_iter().collect();
     let servers: Vec<_> = servers
         .into_iter()
         .map(|(id, name, plan, ip_address)| {

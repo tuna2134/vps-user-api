@@ -1,3 +1,5 @@
+use std::env;
+
 use crate::{
     db::{
         token::add_token,
@@ -19,6 +21,7 @@ use sha2::{Digest, Sha256};
 pub struct CreateUserRequestModel {
     pub username: String,
     pub email: String,
+    pub passcode: String,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -31,6 +34,9 @@ pub async fn create_user(
     State(state): State<AppState>,
     Json(payload): Json<CreateUserRequestModel>,
 ) -> APIResult<Json<CreateUserResponseModel>> {
+    if payload.passcode != env::var("REGISTER_PASSCODE")? {
+        return Err(APIError::unauthorized("Invalid passcode"));
+    }
     let code: String = {
         let mut rng = rand::rng();
         (0..6)

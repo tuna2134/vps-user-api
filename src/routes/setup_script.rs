@@ -5,7 +5,9 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    db::setup_script::{db_create_setup_script, db_get_all_setup_scripts, get_scriptdata_by_id, set_setup_script},
+    db::setup_script::{
+        db_create_setup_script, db_get_all_setup_scripts, get_scriptdata_by_id, set_setup_script,
+    },
     error::APIResult,
     state::AppState,
     token::Token,

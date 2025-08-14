@@ -5,7 +5,7 @@ use crate::{
     },
     error::{APIError, APIResult},
     state::AppState,
-    token::Token,
+    token::Token, utils::mail::send_passcode,
 };
 use axum::{Json, extract::State};
 use base64::prelude::*;
@@ -37,6 +37,7 @@ pub async fn create_user(
             .collect()
     };
     // TODO: Send email with the code
+    send_passcode(code.clone(), payload.email.clone()).await?;
     tracing::info!("Generated code for user {}: {}", payload.username, code);
     let token: String = {
         let mut buf = [0u8; 32];

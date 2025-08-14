@@ -109,3 +109,25 @@ pub async fn set_setup_script(
     .await?;
     Ok(())
 }
+
+pub async fn delete_setup_script(
+    pool: &PgPool,
+    script_id: i32,
+    user_id: i32,
+) -> anyhow::Result<()> {
+    sqlx::query!(
+        r#"
+        DELETE FROM
+            setup_script
+        WHERE
+            id = $1
+        AND
+            author_id = $2
+        "#,
+        script_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}

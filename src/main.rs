@@ -69,6 +69,10 @@ async fn main() -> anyhow::Result<()> {
             "/setup-scripts/{id}",
             put(routes::setup_script::put_script_script),
         )
+        .route(
+            "/setup-scripts/{id}",
+            delete(routes::setup_script::delete_script),
+        )
         .layer(cors)
         .with_state(state);
 

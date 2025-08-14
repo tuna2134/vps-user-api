@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     db::setup_script::{
-        db_create_setup_script, db_get_all_setup_scripts, get_scriptdata_by_id, set_setup_script,
+        db_create_setup_script, db_get_all_setup_scripts, delete_setup_script, get_scriptdata_by_id, set_setup_script
     },
     error::APIResult,
     state::AppState,
@@ -101,5 +101,14 @@ pub async fn put_script_script(
         payload.script,
     )
     .await?;
+    Ok(())
+}
+
+pub async fn delete_script(
+    State(state): State<AppState>,
+    token: Token,
+    Path((script_id,)): Path<(i32,)>,
+) -> APIResult<()> {
+    delete_setup_script(&state.db_pool, script_id, token.user_id).await?;
     Ok(())
 }

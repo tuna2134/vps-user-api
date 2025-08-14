@@ -1,8 +1,8 @@
 use std::env;
 
 use lettre::{
-    AsyncSmtpTransport, Message, Tokio1Executor, message::header::ContentType,
-    transport::smtp::authentication::Credentials, AsyncTransport,
+    AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor, message::header::ContentType,
+    transport::smtp::authentication::Credentials,
 };
 
 pub async fn send_passcode(code: String, mail_to: String) -> anyhow::Result<()> {

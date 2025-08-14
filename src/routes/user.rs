@@ -5,7 +5,8 @@ use crate::{
     },
     error::{APIError, APIResult},
     state::AppState,
-    token::Token, utils::mail::send_passcode,
+    token::Token,
+    utils::mail::send_passcode,
 };
 use axum::{Json, extract::State};
 use base64::prelude::*;

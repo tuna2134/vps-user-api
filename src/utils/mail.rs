@@ -10,9 +10,9 @@ pub async fn send_passcode(code: String, mail_to: String) -> anyhow::Result<()> 
     let msg = Message::builder()
         .from(env::var("MAIL_FROM")?.parse()?)
         .to(mail_to.parse()?)
-        .subject("Your passcode")
+        .subject("あなたの登録コード")
         .header(ContentType::TEXT_PLAIN)
-        .body(format!("Your passcode is: {}", code))?;
+        .body(format!("あなたの登録コードは：{}", code))?;
 
     tracing::debug!(
         "Email message created: {:?}",

@@ -6,6 +6,7 @@ use lettre::{
 };
 
 pub async fn send_passcode(code: String, mail_to: String) -> anyhow::Result<()> {
+    tracing::debug!("Sending passcode email to {}", mail_to);
     let msg = Message::builder()
         .from(env::var("MAIL_FROM")?.parse()?)
         .to(mail_to.parse()?)
@@ -13,6 +14,7 @@ pub async fn send_passcode(code: String, mail_to: String) -> anyhow::Result<()> 
         .header(ContentType::TEXT_PLAIN)
         .body(format!("Your passcode is: {}", code))?;
 
+    tracing::debug!("Email message created: {:?}", env::var("SMTP_HOSTNAME")?.as_str());
     let creds = Credentials::new(env::var("SMTP_USERNAME")?, env::var("SMTP_PASSWORD")?);
     let mailer: AsyncSmtpTransport<Tokio1Executor> =
         AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&env::var("SMTP_HOSTNAME")?)?
